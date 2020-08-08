@@ -4,7 +4,7 @@ using System.Text;
 
 namespace bankapp_refactored_week4.ClassLibraries
 {
-    class Customer
+    public class Customer
     {
     }
 }
