@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bankapp_refactored_week4.BankStore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace bankapp_refactored_week4.ClassLibraries
         public string AccountOwnerID { get; set; }
         public int Balance { get; set; }
         
-        //List of transactions on this account.
+        //List of transactions done on this instance of account
         public List<Transaction> AccountTransactions { get; set; }
 
         public Accounts(string ownerID, int typeOfAccount, decimal firstDeposit)
@@ -26,9 +27,17 @@ namespace bankapp_refactored_week4.ClassLibraries
         }
 
         //making deposits on this account
-        public void MakeDeposit()
+        public void MakeDeposit(string accNum, decimal amountToDeposit, string description, AccountTypes typeOfAccount)
         {
-            //
+            //verify that the minimu deposit amount is from #100 above
+            if (amountToDeposit < 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amountToDeposit), "Deposit amount must be from #100 upwards");
+            }
+
+            //add a new deposit to the account
+            var deposit = new Transaction(amountToDeposit, accNum, description, typeOfAccount.ToString(), DateTime.Now);
+            BankData.Transactions.Add(deposit);
         }
         //making withdrawals on this account
         public void MakeWithdrawal()
