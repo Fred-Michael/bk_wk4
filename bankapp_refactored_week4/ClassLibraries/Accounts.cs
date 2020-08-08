@@ -12,11 +12,38 @@ namespace bankapp_refactored_week4.ClassLibraries
         public string AccountNumber { get; private set; }
         public DateTime AccountDateCreation { get; set; }
         public string AccountOwnerID { get; set; }
-        public int Balance { get; set; }
-        
-        //List of transactions done on this instance of account
-        public List<Transaction> AccountTransactions { get; set; }
 
+        //getting the balance of this particular account from the BankData store
+        public decimal Balance { 
+            get {
+                decimal currentBal = 0;
+                foreach (var item in BankData.Transactions)
+                {
+                    if (item.AccountNumber == AccountNumber)
+                    {
+                        currentBal += item.Amount;
+                    }
+                }
+                return currentBal;
+            }
+        }
+        
+        //List of transactions done on the instance of this account
+        public List<Transaction> AccountTransactions { 
+            get {
+                var accTransaction = new List<Transaction>();
+                foreach (var item in BankData.Transactions)
+                {
+                    if (item.AccountNumber == AccountNumber)
+                    {
+                        accTransaction.Add(item);
+                    }
+                }
+                return accTransaction;
+            }
+        }
+
+        //constructor of the account object
         public Accounts(string ownerID, int typeOfAccount, decimal firstDeposit)
         {
             AccountNumber = accountNumberGenerator.ToString();
@@ -29,22 +56,35 @@ namespace bankapp_refactored_week4.ClassLibraries
         //making deposits on this account
         public void MakeDeposit(string accNum, decimal amountToDeposit, string description, AccountTypes typeOfAccount)
         {
-            //verify that the minimu deposit amount is from #100 above
+            //verify that the minimum deposit amount is from #100 above
             if (amountToDeposit < 100)
             {
                 throw new ArgumentOutOfRangeException(nameof(amountToDeposit), "Deposit amount must be from #100 upwards");
             }
 
-            //add a new deposit to the account
+            //add a new deposit to the account in the Bank store
             var deposit = new Transaction(amountToDeposit, accNum, description, typeOfAccount.ToString(), DateTime.Now);
             BankData.Transactions.Add(deposit);
         }
+
         //making withdrawals on this account
-        public void MakeWithdrawal()
+        public void MakeWithdrawal(string accNum, decimal amountToWithdraw, string description, AccountTypes typeOfAccount)
         {
-            //
+            if (amountToWithdraw <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amountToWithdraw), "Invalid operation: You cannot withdraw such an amount. Enter a valid amount next time");
+            }
+            if (Balance - amountToWithdraw <= 0)
+            {
+                throw new InvalidOperationException("Invalid Operation: The amount you want to withdraw exceeds the minimum amount that should be left in your account");
+            }
+
+            //make a withdrawal from the account in the Bank store
+            var withdrawalChanges = new Transaction(-amountToWithdraw, accNum, description, typeOfAccount.ToString(), DateTime.Now);
+            BankData.Transactions.Add(withdrawalChanges);
         }
-        //making transfer on this account
+
+        //making transfer from/to this account
         public void MakeTransfer()
         {
             //
