@@ -13,6 +13,7 @@ namespace bankapp_refactored_week4.ClassLibraries
 
         public List<Accounts> customersAccounts { get; set; }
 
+        //customer constructor class
         public Customer(string name, string email)
         {
             customerEmail = email;
