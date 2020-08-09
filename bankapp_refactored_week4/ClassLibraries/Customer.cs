@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bankapp_refactored_week4.BankStore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,6 +21,17 @@ namespace bankapp_refactored_week4.ClassLibraries
             customerID = customerIDGenerator.ToString();
             customerIDGenerator++;
             customerName = name;
+            var newCustomer = new Customer(customerName, customerEmail, customerID);
+            BankData.Customers.Add(newCustomer);
         }
+
+        //overloaded customer class that takes ALL necessary parameters and adds it to the BankData store for newly added customers
+        public Customer(string name, string email, string customerID) : this(name, email)
+        {
+            this.customerID = customerID;
+        }
+
+        //once a customer is created (i.e. the customer registers), the person should be pushed into the BankData.customer list as reference.
+        //same with accounts and transactions (already taken care of)
     }
 }

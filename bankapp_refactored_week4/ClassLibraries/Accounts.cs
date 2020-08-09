@@ -51,6 +51,17 @@ namespace bankapp_refactored_week4.ClassLibraries
             AccountOwnerID = ownerID;
             AccountType = (AccountTypes)typeOfAccount;
             AccountDateCreation = DateTime.Now;
+            var newAccount = new Accounts(AccountNumber, AccountOwnerID, AccountType, AccountDateCreation);
+            BankData.Accounts.Add(newAccount);
+        }
+
+        //overloaded account class that takes necessary parameters and adds it to the BankData store for accounts
+        public Accounts(string accountNumber, string accountOwnerID, AccountTypes accountType, DateTime accountDateCreation)
+        {
+            AccountNumber = accountNumber;
+            AccountOwnerID = accountOwnerID;
+            AccountType = accountType;
+            AccountDateCreation = accountDateCreation;
         }
 
         //making deposits on this account
@@ -85,9 +96,18 @@ namespace bankapp_refactored_week4.ClassLibraries
         }
 
         //making transfer from/to this account
-        public void MakeTransfer()
+        public void MakeTransfer(string senderAccNum, string receiverAccNum, decimal amountToTransfer, string description, AccountTypes typeOfAccount)
         {
-            //
+            foreach (var account in BankData.Accounts)
+            {
+                if (account.AccountNumber == senderAccNum && account.Balance > 0)
+                {
+                    account.MakeWithdrawal(senderAccNum, amountToTransfer, description, typeOfAccount);
+                    account.MakeDeposit(receiverAccNum, amountToTransfer, description, typeOfAccount);
+                    break;
+                }
+                //throw new InvalidOperationException("Invalid Operation: Account was not found");
+            }
         }
     }
 
